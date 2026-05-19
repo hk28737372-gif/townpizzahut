@@ -1,44 +1,62 @@
-# [Project name]
+# Town Pizza-Hut (Family Restaurant)
 
-_Replace the heading above with the project's name, and this line with one sentence describing what this app does for users._
+A complete premium restaurant website for Town Pizza-Hut, Swat, Pakistan — featuring a multi-page menu system, cart, WhatsApp ordering, gallery, branches, and an admin dashboard.
 
 ## Run & Operate
 
-- `pnpm --filter @workspace/api-server run dev` — run the API server (port 5000)
+- `pnpm --filter @workspace/town-pizza-hut run dev` — run the website (port 25613)
 - `pnpm run typecheck` — full typecheck across all packages
 - `pnpm run build` — typecheck + build all packages
-- `pnpm --filter @workspace/api-spec run codegen` — regenerate API hooks and Zod schemas from the OpenAPI spec
-- `pnpm --filter @workspace/db run push` — push DB schema changes (dev only)
-- Required env: `DATABASE_URL` — Postgres connection string
 
 ## Stack
 
 - pnpm workspaces, Node.js 24, TypeScript 5.9
-- API: Express 5
-- DB: PostgreSQL + Drizzle ORM
-- Validation: Zod (`zod/v4`), `drizzle-zod`
-- API codegen: Orval (from OpenAPI spec)
-- Build: esbuild (CJS bundle)
+- React + Vite + wouter (routing)
+- Tailwind CSS v4 + shadcn/ui components
+- framer-motion (animations)
+- react-icons (WhatsApp icons)
+- No backend — all data hardcoded in `src/data/menuData.ts`
 
 ## Where things live
 
-_Populate as you build — short repo map plus pointers to the source-of-truth file for DB schema, API contracts, theme files, etc._
+- `artifacts/town-pizza-hut/src/` — all source code
+- `artifacts/town-pizza-hut/src/data/menuData.ts` — all menu items, deals, branches (source of truth)
+- `artifacts/town-pizza-hut/src/context/CartContext.tsx` — cart state with localStorage persistence
+- `artifacts/town-pizza-hut/src/pages/` — all pages
+- `artifacts/town-pizza-hut/src/components/layout/` — Navbar (with cart drawer) and Footer
+- `artifacts/town-pizza-hut/public/logo.png` — restaurant logo
 
 ## Architecture decisions
 
-_Populate as you build — non-obvious choices a reader couldn't infer from the code (3-5 bullets)._
+- No backend: all data is hardcoded in `menuData.ts` — images use Unsplash CDN URLs
+- WhatsApp ordering: Checkout builds a formatted order message and opens WhatsApp with the branch-specific number
+- Cart persists in `localStorage` across page reloads
+- Admin panel is client-side only with hardcoded password "townpizza2024"
+- Three branches each have separate WhatsApp numbers for order routing
 
 ## Product
 
-_Describe the high-level user-facing capabilities of this app once they exist._
+- **Home**: Hero, features strip, category cards, featured deals, CTA banner
+- **Menu**: 27 items across 4 categories (Burgers, Fried Chicken, Shawarma & Rolls, Pizza) with search + filter
+- **Deals**: 9 combo deals with add-to-cart
+- **Gallery**: 16 photo gallery with category filter
+- **Branches**: 3 branch cards with Google Maps embed, call & WhatsApp buttons
+- **About**: Restaurant story and values
+- **Contact**: Contact form, supervisor numbers, branch quick-contact
+- **Checkout**: Cart review, delivery form, WhatsApp order dispatch per branch
+- **Admin**: Password-protected dashboard (password: townpizza2024) with products, deals, orders tabs
 
 ## User preferences
 
-_Populate as you build — explicit user instructions worth remembering across sessions._
+- Brand colors: Maroon #800020, Gold #D4AF37, Cream #FDFBF7
+- Fonts: Playfair Display (headings) + Inter (body)
+- WhatsApp numbers: Branch 1 → 03189659090, Branch 3 → 03199629090, Branch 5 → 03409659090
 
 ## Gotchas
 
-_Populate as you build — sharp edges, "always run X before Y" rules._
+- All images use Unsplash CDN URLs (no local image files needed)
+- Admin panel has no real backend — it's a UI demo only
+- The Gallery page has its own local `galleryCategories` array (different from menu categories)
 
 ## Pointers
 

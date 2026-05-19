@@ -1,0 +1,62 @@
+uploads = []
+outputs = []
+
+[[generated]]
+id = "rSoOe9BaS5l2RticiyGyJ"
+uri = "file://artifacts/town-pizza-hut/public/hero.png"
+type = "image"
+title = "premium restaurant hero"
+
+[[generated]]
+id = "z4Jfz3xuKTr96L-jcB1qd"
+uri = "file://artifacts/town-pizza-hut/public/burger-1.png"
+type = "image"
+title = "zinger burger"
+
+[[generated]]
+id = "wDBrXYPDn20BHrt1S-Lnf"
+uri = "file://artifacts/town-pizza-hut/public/burger-2.png"
+type = "image"
+title = "cheese burger"
+
+[[generated]]
+id = "7j_KykwUq5B0pvhuryrPD"
+uri = "file://artifacts/town-pizza-hut/public/burger-3.png"
+type = "image"
+title = "chicken burger"
+
+[[generated]]
+id = "c1iNOWpZlHW-OQJph-XYe"
+uri = "file://artifacts/town-pizza-hut/public/burger-4.png"
+type = "image"
+title = "american burger"
+
+[[generated]]
+id = "6ghCuuPaAsUekYIzwfOjc"
+uri = "file://artifacts/town-pizza-hut/public/burger-5.png"
+type = "image"
+title = "tikka burger"
+
+[[generated]]
+id = "HDmVbixpXdRRaOLdOJg_2"
+uri = "file://artifacts/town-pizza-hut/public/burger-6.png"
+type = "image"
+title = "tower burger"
+
+[[generated]]
+id = "0gK1rptXtPg9XQih12KQP"
+uri = "file://artifacts/town-pizza-hut/public/burger-7.png"
+type = "image"
+title = "double decker burger"
+
+[[generated]]
+id = "1LkCnGWoFhdHn6g8lSlBo"
+uri = "file://artifacts/town-pizza-hut/public/burger-8.png"
+type = "image"
+title = "special pizza burger"
+
+[[generated]]
+id = "Gprr1E9gC92CB86p5daEi"
+uri = "file://artifacts/town-pizza-hut/public/about-chef.png"
+type = "image"
+title = "chef in kitchen"
