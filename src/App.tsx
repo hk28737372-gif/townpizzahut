@@ -17,6 +17,8 @@ import Contact from "@/pages/Contact";
 import Checkout from "@/pages/Checkout";
 import Admin from "@/pages/Admin";
 
+import { useHashLocation } from "wouter/use-hash-location";
+
 const queryClient = new QueryClient();
 
 function Layout({ children }: { children: React.ReactNode }) {
@@ -60,7 +62,7 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <CartProvider>
         <TooltipProvider>
-          <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
+          <WouterRouter hook={useHashLocation}>
             <Router />
           </WouterRouter>
           <Toaster />
