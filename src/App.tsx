@@ -1,4 +1,5 @@
 import { Switch, Route, Router as WouterRouter } from "wouter";
+import { useHashLocation } from "wouter/use-hash-location";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -16,8 +17,6 @@ import About from "@/pages/About";
 import Contact from "@/pages/Contact";
 import Checkout from "@/pages/Checkout";
 import Admin from "@/pages/Admin";
-
-import { useHashLocation } from "wouter/use-hash-location";
 
 const queryClient = new QueryClient();
 
