@@ -175,26 +175,41 @@ export default function Home() {
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
           >
             {deals.slice(0, 4).map((deal) => (
-              <motion.div key={deal.id} variants={fadeInUp} className="bg-card rounded-2xl overflow-hidden shadow-sm border group">
+              <motion.div key={deal.id} variants={fadeInUp} className="bg-card rounded-2xl overflow-hidden shadow-sm border group hover:shadow-lg transition-all duration-300 hover:-translate-y-1 flex flex-col">
+                {/* Image — NO price on image */}
                 <div className="h-48 relative overflow-hidden">
                   <img src={deal.image} alt={deal.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" loading="lazy" />
-                  <div className="absolute top-4 right-4 bg-primary text-white font-bold px-3 py-1 rounded-full shadow-lg">
-                    Rs. {deal.price}
-                  </div>
+                  <span className="absolute top-3 left-3 bg-black/50 text-white text-xs font-bold px-3 py-1 rounded-full backdrop-blur-sm">
+                    {deal.title}
+                  </span>
                 </div>
-                <div className="p-5">
-                  <h3 className="font-serif text-xl font-bold mb-3">{deal.title}</h3>
-                  <ul className="space-y-1 mb-6 text-sm text-muted-foreground">
-                    {deal.items.map((item, i) => (
+                <div className="p-5 flex flex-col flex-1">
+                  {/* Price below image, Amazon/Daraz style */}
+                  <div className="flex items-baseline gap-2 mb-3 pb-3 border-b">
+                    <span className="text-2xl font-bold text-primary">Rs. {deal.price}</span>
+                    <span className="text-xs text-green-600 font-semibold bg-green-50 border border-green-200 px-1.5 py-0.5 rounded-full">20% OFF</span>
+                  </div>
+                  <ul className="space-y-1 mb-5 text-sm text-muted-foreground flex-1">
+                    {deal.items.slice(0, 3).map((item, i) => (
                       <li key={i} className="flex items-start gap-2">
-                        <span className="text-accent mt-0.5">•</span>
+                        <span className="text-primary mt-0.5 font-bold">✓</span>
                         <span>{item}</span>
                       </li>
                     ))}
+                    {deal.items.length > 3 && <li className="text-xs text-muted-foreground italic">+{deal.items.length - 3} more items</li>}
                   </ul>
-                  <Link href="/deals">
-                    <Button className="w-full rounded-full" variant="secondary">Order Deal</Button>
-                  </Link>
+                  <div className="grid grid-cols-2 gap-2 mt-auto">
+                    <Link href="/deals">
+                      <Button variant="outline" size="sm" className="w-full h-10 rounded-xl border-primary/30 text-primary hover:bg-primary/5 text-xs font-semibold">
+                        Add to Cart
+                      </Button>
+                    </Link>
+                    <Link href="/deals">
+                      <Button size="sm" className="w-full h-10 rounded-xl text-xs font-semibold">
+                        Buy Now
+                      </Button>
+                    </Link>
+                  </div>
                 </div>
               </motion.div>
             ))}
