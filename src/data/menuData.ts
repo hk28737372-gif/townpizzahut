@@ -324,26 +324,42 @@ export const deals: Deal[] = [
 export const branches: Branch[] = [
   {
     id: 1,
-    name: "Branch 1 — Township",
+    name: "Branch 1",
     address: "Kabal Road Township Chowk Naimat Plaza, Swat",
     phones: ["0318-9659090", "0344-9659090", "0346-9659090"],
     whatsappNumber: "923189659090",
     mapQuery: "Kabal Road Township Chowk, Swat"
   },
   {
+    id: 2,
+    name: "Branch 2",
+    address: "Khwaza Khela Bazar Near Secondary School Hashmat Plaza, Swat",
+    phones: ["0314-9619090", "0346-9619090", "0946-744200"],
+    whatsappNumber: "923149619090",
+    mapQuery: "Khwaza Khela Bazar, Swat"
+  },
+  {
     id: 3,
-    name: "Branch 3 — Sersanai",
+    name: "Branch 3",
     address: "Main Sersanai Chowk 2nd Floor Deolai Road, Swat",
     phones: ["0319-9629090", "0346-9629090", "0347-9629090", "0314-3079593"],
     whatsappNumber: "923199629090",
     mapQuery: "Sersanai Chowk Deolai Road, Swat"
   },
   {
+    id: 4,
+    name: "Branch 4",
+    address: "NINGOLAI CHOTA KALAM, Swat",
+    phones: ["0328-9659090", "0341-9659090", "0342-9659090"],
+    whatsappNumber: "923289659090",
+    mapQuery: "Ningolai Chota Kalam, Swat"
+  },
+  {
     id: 5,
-    name: "Branch 5 — Khwaza Khela (New)",
+    name: "Branch 5",
     address: "Bagh Dherai Road, Khwaza Khela Chowk, Khirabad, Near Wakeel Shopping Center, Swat",
-    phones: ["0340-9659090", "0341-9619090"],
-    whatsappNumber: "923409659090",
+    phones: ["0340-9619090", "0341-9619090"],
+    whatsappNumber: "923409619090",
     mapQuery: "Khwaza Khela Chowk Khirabad, Swat"
   }
 ];

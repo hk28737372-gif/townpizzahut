@@ -14,9 +14,11 @@ import { Link, useLocation } from "wouter";
 const DELIVERY_CHARGE = 100;
 
 const branchWhatsApp: Record<string, string> = {
-  "Branch 1": "03189659090",
-  "Branch 3": "03199629090",
-  "Branch 5": "03409659090"
+  "Branch 1": "923189659090",
+  "Branch 2": "923149619090",
+  "Branch 3": "923199629090",
+  "Branch 4": "923289659090",
+  "Branch 5": "923409619090"
 };
 
 interface FormData {
@@ -266,7 +268,9 @@ export default function Checkout() {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="Branch 1">Branch 1 — Township, Kabal Road</SelectItem>
+                      <SelectItem value="Branch 2">Branch 2 — Khwaza Khela Bazar</SelectItem>
                       <SelectItem value="Branch 3">Branch 3 — Sersanai Chowk</SelectItem>
+                      <SelectItem value="Branch 4">Branch 4 — Ningolai Chota Kalam</SelectItem>
                       <SelectItem value="Branch 5">Branch 5 — Khwaza Khela (New)</SelectItem>
                     </SelectContent>
                   </Select>
