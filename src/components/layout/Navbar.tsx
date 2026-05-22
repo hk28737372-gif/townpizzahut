@@ -5,7 +5,7 @@ import { useCart } from "@/context/CartContext";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetFooter } from "@/components/ui/sheet";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import logoPath from "/logo.png";
+import logoPath from "@/assets/logo.png";
 
 const links = [
   { href: "/", label: "Home" },

@@ -3,7 +3,7 @@ import { Link } from "wouter";
 import { MapPin, Phone, Clock } from "lucide-react";
 import { FaWhatsapp } from "react-icons/fa";
 import { branches } from "@/data/menuData";
-import logoPath from "/logo.png";
+import logoPath from "@/assets/logo.png";
 
 export function Footer() {
   return (
