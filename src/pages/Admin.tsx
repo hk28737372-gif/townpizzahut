@@ -38,6 +38,20 @@ export default function Admin() {
   const [addItemOpen, setAddItemOpen] = useState(false);
   const [newItem, setNewItem] = useState({ name: "", category: "Burgers", price: "", image: "" });
 
+  const [editItemOpen, setEditItemOpen] = useState(false);
+  const [editingItem, setEditingItem] = useState<{ id: number, name: string, category: string, price: string, image: string } | null>(null);
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>, setter: React.Dispatch<React.SetStateAction<any>>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setter((prev: any) => ({ ...prev, image: reader.result as string }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     if (password === ADMIN_PASSWORD) {
@@ -65,6 +79,18 @@ export default function Admin() {
     setItems(prev => [...prev, item]);
     setNewItem({ name: "", category: "Burgers", price: "", image: "" });
     setAddItemOpen(false);
+  };
+
+  const handleSaveEdit = () => {
+    if (!editingItem || !editingItem.name || !editingItem.price) return;
+    setItems(prev => prev.map(item => item.id === editingItem.id ? { ...item, name: editingItem.name, category: editingItem.category, price: Number(editingItem.price), image: editingItem.image || item.image } : item));
+    setEditItemOpen(false);
+    setEditingItem(null);
+  };
+
+  const openEditModal = (item: MenuItem) => {
+    setEditingItem({ id: item.id, name: item.name, category: item.category, price: item.price.toString(), image: item.image });
+    setEditItemOpen(true);
   };
 
   const handleDeleteDeal = (id: number) => {
@@ -269,11 +295,53 @@ export default function Admin() {
                       <Label className="text-sm font-medium">Image URL</Label>
                       <Input placeholder="https://..." value={newItem.image} onChange={e => setNewItem(p => ({ ...p, image: e.target.value }))} className="h-11 rounded-xl" />
                     </div>
+                    <div className="space-y-1.5">
+                      <Label className="text-sm font-medium">Or Upload Image (Gallery)</Label>
+                      <Input type="file" accept="image/*" onChange={e => handleImageUpload(e, setNewItem)} className="h-11 rounded-xl file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20" />
+                    </div>
                     <Button className="w-full h-11 rounded-xl" onClick={handleAddItem}>Add Product</Button>
                   </div>
                 </DialogContent>
               </Dialog>
             </div>
+
+            <Dialog open={editItemOpen} onOpenChange={setEditItemOpen}>
+              <DialogContent className="rounded-2xl">
+                <DialogHeader>
+                  <DialogTitle className="font-serif text-xl">Edit Product</DialogTitle>
+                </DialogHeader>
+                {editingItem && (
+                  <div className="space-y-4 mt-4">
+                    <div className="space-y-1.5">
+                      <Label className="text-sm font-medium">Product Name</Label>
+                      <Input placeholder="e.g. Spicy Chicken Burger" value={editingItem.name} onChange={e => setEditingItem(p => p ? { ...p, name: e.target.value } : null)} className="h-11 rounded-xl" />
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label className="text-sm font-medium">Category</Label>
+                      <Select value={editingItem.category} onValueChange={v => setEditingItem(p => p ? { ...p, category: v } : null)}>
+                        <SelectTrigger className="h-11 rounded-xl"><SelectValue /></SelectTrigger>
+                        <SelectContent>
+                          {categories.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label className="text-sm font-medium">Price (Rs.)</Label>
+                      <Input type="number" placeholder="350" value={editingItem.price} onChange={e => setEditingItem(p => p ? { ...p, price: e.target.value } : null)} className="h-11 rounded-xl" />
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label className="text-sm font-medium">Image URL</Label>
+                      <Input placeholder="https://..." value={editingItem.image} onChange={e => setEditingItem(p => p ? { ...p, image: e.target.value } : null)} className="h-11 rounded-xl" />
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label className="text-sm font-medium">Or Upload Image (Gallery)</Label>
+                      <Input type="file" accept="image/*" onChange={e => handleImageUpload(e, setEditingItem)} className="h-11 rounded-xl file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20" />
+                    </div>
+                    <Button className="w-full h-11 rounded-xl" onClick={handleSaveEdit}>Save Changes</Button>
+                  </div>
+                )}
+              </DialogContent>
+            </Dialog>
 
             <div className="bg-card border rounded-2xl shadow-sm overflow-hidden">
               <div className="overflow-x-auto">
@@ -301,7 +369,7 @@ export default function Admin() {
                         <td className="px-5 py-3 font-semibold text-primary">Rs. {item.price}</td>
                         <td className="px-5 py-3 text-right">
                           <div className="flex gap-2 justify-end">
-                            <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg text-muted-foreground hover:text-foreground">
+                            <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg text-muted-foreground hover:text-foreground" onClick={() => openEditModal(item)}>
                               <Pencil size={14} />
                             </Button>
                             <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg text-muted-foreground hover:text-destructive" onClick={() => handleDeleteItem(item.id)}>
