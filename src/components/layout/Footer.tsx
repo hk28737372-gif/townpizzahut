@@ -29,7 +29,8 @@ export function Footer() {
                 { label: "Our Menu", href: "/menu" },
                 { label: "Special Deals", href: "/deals" },
                 { label: "Photo Gallery", href: "/gallery" },
-                { label: "Contact Us", href: "/contact" }
+                { label: "Contact Us", href: "/contact" },
+                { label: "Admin Panel", href: "/admin" }
               ].map((link) => (
                 <li key={link.href}>
                   <Link href={link.href}>
