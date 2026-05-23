@@ -1,5 +1,5 @@
 import React from "react";
-import { deals } from "@/data/menuData";
+import { useMenu } from "@/context/MenuContext";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/context/CartContext";
 import { useToast } from "@/hooks/use-toast";
@@ -8,6 +8,7 @@ import { motion } from "framer-motion";
 import { Link } from "wouter";
 
 export default function Deals() {
+  const { deals } = useMenu();
   const { addToCart } = useCart();
   const { toast } = useToast();
 

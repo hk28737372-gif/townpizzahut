@@ -2,12 +2,14 @@ import React, { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { Search } from "lucide-react";
 import { motion } from "framer-motion";
-import { categories, menuItems } from "@/data/menuData";
+import { categories } from "@/data/menuData";
+import { useMenu } from "@/context/MenuContext";
 import { FoodCard } from "@/components/FoodCard";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default function Menu() {
+  const { items: menuItems } = useMenu();
   const [searchParams] = useLocation();
   const initialCategory = new URLSearchParams(window.location.search).get("category") || "All";
   

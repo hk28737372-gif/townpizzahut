@@ -5,8 +5,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
+import { useMenu } from "@/context/MenuContext";
 import { menuItems as initialItems, deals as initialDeals, branches, categories } from "@/data/menuData";
 import type { MenuItem, Deal } from "@/data/menuData";
 
@@ -33,13 +34,21 @@ export default function Admin() {
   const [loginError, setLoginError] = useState("");
   const [activeTab, setActiveTab] = useState("dashboard");
 
-  const [items, setItems] = useState<MenuItem[]>(initialItems);
-  const [deals, setDeals] = useState<Deal[]>(initialDeals);
+  const { items, deals, addItem, updateItem, deleteItem, updateDeal, deleteDeal } = useMenu();
   const [addItemOpen, setAddItemOpen] = useState(false);
   const [newItem, setNewItem] = useState({ name: "", category: "Burgers", price: "", image: "" });
 
   const [editItemOpen, setEditItemOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<{ id: number, name: string, category: string, price: string, image: string } | null>(null);
+
+  const [itemToDelete, setItemToDelete] = useState<number | null>(null);
+  const [deleteItemOpen, setDeleteItemOpen] = useState(false);
+
+  const [editDealOpen, setEditDealOpen] = useState(false);
+  const [editingDeal, setEditingDeal] = useState<{ id: number, title: string, price: string, items: string, image: string } | null>(null);
+
+  const [dealToDelete, setDealToDelete] = useState<number | null>(null);
+  const [deleteDealOpen, setDeleteDealOpen] = useState(false);
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>, setter: React.Dispatch<React.SetStateAction<any>>) => {
     const file = e.target.files?.[0];
@@ -62,8 +71,17 @@ export default function Admin() {
     }
   };
 
-  const handleDeleteItem = (id: number) => {
-    setItems(prev => prev.filter(item => item.id !== id));
+  const confirmDeleteItem = (id: number) => {
+    setItemToDelete(id);
+    setDeleteItemOpen(true);
+  };
+
+  const executeDeleteItem = () => {
+    if (itemToDelete !== null) {
+      deleteItem(itemToDelete);
+    }
+    setDeleteItemOpen(false);
+    setItemToDelete(null);
   };
 
   const handleAddItem = () => {
@@ -76,14 +94,21 @@ export default function Admin() {
       image: newItem.image || "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400&q=75",
       description: ""
     };
-    setItems(prev => [...prev, item]);
+    addItem(item);
     setNewItem({ name: "", category: "Burgers", price: "", image: "" });
     setAddItemOpen(false);
   };
 
   const handleSaveEdit = () => {
     if (!editingItem || !editingItem.name || !editingItem.price) return;
-    setItems(prev => prev.map(item => item.id === editingItem.id ? { ...item, name: editingItem.name, category: editingItem.category, price: Number(editingItem.price), image: editingItem.image || item.image } : item));
+    updateItem({
+      id: editingItem.id,
+      name: editingItem.name,
+      category: editingItem.category,
+      price: Number(editingItem.price),
+      image: editingItem.image,
+      description: items.find(i => i.id === editingItem.id)?.description || ""
+    });
     setEditItemOpen(false);
     setEditingItem(null);
   };
@@ -93,8 +118,35 @@ export default function Admin() {
     setEditItemOpen(true);
   };
 
-  const handleDeleteDeal = (id: number) => {
-    setDeals(prev => prev.filter(d => d.id !== id));
+  const openEditDealModal = (deal: Deal) => {
+    setEditingDeal({ id: deal.id, title: deal.title, price: deal.price.toString(), items: deal.items.join(", "), image: deal.image });
+    setEditDealOpen(true);
+  };
+
+  const handleSaveEditDeal = () => {
+    if (!editingDeal || !editingDeal.title || !editingDeal.price) return;
+    updateDeal({
+      id: editingDeal.id,
+      title: editingDeal.title,
+      price: Number(editingDeal.price),
+      items: editingDeal.items.split(",").map(s => s.trim()).filter(Boolean),
+      image: editingDeal.image
+    });
+    setEditDealOpen(false);
+    setEditingDeal(null);
+  };
+
+  const confirmDeleteDeal = (id: number) => {
+    setDealToDelete(id);
+    setDeleteDealOpen(true);
+  };
+
+  const executeDeleteDeal = () => {
+    if (dealToDelete !== null) {
+      deleteDeal(dealToDelete);
+    }
+    setDeleteDealOpen(false);
+    setDealToDelete(null);
   };
 
   if (!authenticated) {
@@ -372,7 +424,7 @@ export default function Admin() {
                             <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg text-muted-foreground hover:text-foreground" onClick={() => openEditModal(item)}>
                               <Pencil size={14} />
                             </Button>
-                            <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg text-muted-foreground hover:text-destructive" onClick={() => handleDeleteItem(item.id)}>
+                            <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg text-muted-foreground hover:text-destructive" onClick={() => confirmDeleteItem(item.id)}>
                               <Trash2 size={14} />
                             </Button>
                           </div>
@@ -383,6 +435,22 @@ export default function Admin() {
                 </table>
               </div>
             </div>
+
+            <Dialog open={deleteItemOpen} onOpenChange={setDeleteItemOpen}>
+              <DialogContent className="rounded-2xl sm:max-w-md">
+                <DialogHeader>
+                  <DialogTitle className="font-serif text-xl text-destructive">Delete Product?</DialogTitle>
+                </DialogHeader>
+                <div className="py-4">
+                  <p className="text-muted-foreground">Are you sure you want to delete this product? This action cannot be undone.</p>
+                </div>
+                <DialogFooter className="gap-2 sm:gap-0">
+                  <Button variant="outline" onClick={() => setDeleteItemOpen(false)} className="rounded-xl">Cancel</Button>
+                  <Button variant="destructive" onClick={executeDeleteItem} className="rounded-xl">Delete</Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+
           </motion.div>
         )}
 
@@ -402,11 +470,16 @@ export default function Admin() {
                     </div>
                   </div>
                   <div className="p-4">
-                    <div className="flex items-center justify-between mb-2">
-                      <h3 className="font-bold">{deal.title}</h3>
-                      <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg text-destructive hover:text-destructive/80" onClick={() => handleDeleteDeal(deal.id)}>
-                        <Trash2 size={14} />
-                      </Button>
+                    <div className="flex items-center justify-between mb-2 gap-2">
+                      <h3 className="font-bold flex-1">{deal.title}</h3>
+                      <div className="flex gap-1 shrink-0">
+                        <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg text-muted-foreground hover:text-foreground" onClick={() => openEditDealModal(deal)}>
+                          <Pencil size={14} />
+                        </Button>
+                        <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg text-destructive hover:text-destructive/80" onClick={() => confirmDeleteDeal(deal.id)}>
+                          <Trash2 size={14} />
+                        </Button>
+                      </div>
                     </div>
                     <ul className="text-xs text-muted-foreground space-y-0.5">
                       {deal.items.map((item, i) => <li key={i}>• {item}</li>)}
@@ -415,6 +488,55 @@ export default function Admin() {
                 </div>
               ))}
             </div>
+
+            <Dialog open={editDealOpen} onOpenChange={setEditDealOpen}>
+              <DialogContent className="rounded-2xl">
+                <DialogHeader>
+                  <DialogTitle className="font-serif text-xl">Edit Deal</DialogTitle>
+                </DialogHeader>
+                {editingDeal && (
+                  <div className="space-y-4 mt-4">
+                    <div className="space-y-1.5">
+                      <Label className="text-sm font-medium">Deal Title</Label>
+                      <Input placeholder="e.g. Midnight Deal" value={editingDeal.title} onChange={e => setEditingDeal(p => p ? { ...p, title: e.target.value } : null)} className="h-11 rounded-xl" />
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label className="text-sm font-medium">Include Items (comma separated)</Label>
+                      <Input placeholder="1 Zinger, 1 Pepsi" value={editingDeal.items} onChange={e => setEditingDeal(p => p ? { ...p, items: e.target.value } : null)} className="h-11 rounded-xl" />
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label className="text-sm font-medium">Price (Rs.)</Label>
+                      <Input type="number" placeholder="999" value={editingDeal.price} onChange={e => setEditingDeal(p => p ? { ...p, price: e.target.value } : null)} className="h-11 rounded-xl" />
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label className="text-sm font-medium">Image URL</Label>
+                      <Input placeholder="https://..." value={editingDeal.image} onChange={e => setEditingDeal(p => p ? { ...p, image: e.target.value } : null)} className="h-11 rounded-xl" />
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label className="text-sm font-medium">Or Upload Image (Gallery)</Label>
+                      <Input type="file" accept="image/*" onChange={e => handleImageUpload(e, setEditingDeal)} className="h-11 rounded-xl file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20" />
+                    </div>
+                    <Button className="w-full h-11 rounded-xl" onClick={handleSaveEditDeal}>Save Deal changes</Button>
+                  </div>
+                )}
+              </DialogContent>
+            </Dialog>
+
+            <Dialog open={deleteDealOpen} onOpenChange={setDeleteDealOpen}>
+              <DialogContent className="rounded-2xl sm:max-w-md">
+                <DialogHeader>
+                  <DialogTitle className="font-serif text-xl text-destructive">Delete Deal?</DialogTitle>
+                </DialogHeader>
+                <div className="py-4">
+                  <p className="text-muted-foreground">Are you sure you want to delete this deal? This action cannot be undone.</p>
+                </div>
+                <DialogFooter className="gap-2 sm:gap-0">
+                  <Button variant="outline" onClick={() => setDeleteDealOpen(false)} className="rounded-xl">Cancel</Button>
+                  <Button variant="destructive" onClick={executeDeleteDeal} className="rounded-xl">Delete</Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+
           </motion.div>
         )}
 

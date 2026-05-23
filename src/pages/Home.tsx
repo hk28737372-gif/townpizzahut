@@ -4,7 +4,8 @@ import { motion } from "framer-motion";
 import { ArrowRight, Star, Clock, Heart, Truck, Utensils } from "lucide-react";
 import { FaWhatsapp } from "react-icons/fa";
 import { Button } from "@/components/ui/button";
-import { categories, menuItems, deals } from "@/data/menuData";
+import { categories } from "@/data/menuData";
+import { useMenu } from "@/context/MenuContext";
 import { FoodCard } from "@/components/FoodCard";
 
 const fadeInUp = {
@@ -23,6 +24,7 @@ const staggerContainer = {
 };
 
 export default function Home() {
+  const { deals } = useMenu();
   return (
     <div className="min-h-screen bg-background">
       {/* Hero Section */}
