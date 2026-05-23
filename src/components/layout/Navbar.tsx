@@ -70,11 +70,11 @@ export function Navbar() {
                     {cartItems.map((cartItem) => (
                       <div key={`${cartItem.isDeal ? 'deal' : 'item'}-${cartItem.item.id}`} className="flex gap-4 border-b pb-4">
                         <div className="h-16 w-16 bg-muted rounded-md overflow-hidden shrink-0">
-                          <img src={cartItem.item.image} alt={cartItem.item.name || (cartItem.item as any).title} className="w-full h-full object-cover" />
+                          <img src={cartItem.item.image} alt={'name' in cartItem.item ? cartItem.item.name : cartItem.item.title} className="w-full h-full object-cover" />
                         </div>
                         <div className="flex-1 flex flex-col justify-between">
                           <div className="flex justify-between">
-                            <h4 className="font-medium text-sm line-clamp-2 pr-2">{cartItem.item.name || (cartItem.item as any).title}</h4>
+                            <h4 className="font-medium text-sm line-clamp-2 pr-2">{'name' in cartItem.item ? cartItem.item.name : cartItem.item.title}</h4>
                             <span className="font-bold text-sm shrink-0">Rs. {cartItem.item.price * cartItem.quantity}</span>
                           </div>
                           <div className="flex items-center justify-between mt-2">
