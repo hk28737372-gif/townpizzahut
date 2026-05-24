@@ -17,6 +17,7 @@ interface MenuContextType {
   updateDeal: (deal: Deal) => Promise<void>;
   deleteDeal: (id: number) => Promise<void>;
   updateCategory: (category: CategoryItem) => Promise<void>;
+  addCategory: (category: CategoryItem) => Promise<void>;
   reorderCategories: (newCategories: CategoryItem[]) => Promise<void>;
 }
 
@@ -111,6 +112,10 @@ export function MenuProvider({ children }: { children: ReactNode }) {
     await setDoc(doc(db, 'categories', updatedCategory.id), updatedCategory);
   };
 
+  const addCategory = async (category: CategoryItem) => {
+    await setDoc(doc(db, 'categories', category.id), category);
+  };
+
   const reorderCategories = async (newCategories: CategoryItem[]) => {
     // Optimistic UI update
     setCategories(newCategories);
@@ -124,7 +129,7 @@ export function MenuProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <MenuContext.Provider value={{ items, deals, categories, setItems, setDeals, setCategories, addItem, updateItem, deleteItem, addDeal, updateDeal, deleteDeal, updateCategory, reorderCategories }}>
+    <MenuContext.Provider value={{ items, deals, categories, setItems, setDeals, setCategories, addItem, updateItem, deleteItem, addDeal, updateDeal, deleteDeal, updateCategory, addCategory, reorderCategories }}>
       {children}
     </MenuContext.Provider>
   );

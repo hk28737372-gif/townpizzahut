@@ -6,12 +6,15 @@ import defaultLogo from "@/assets/logo.png";
 export interface SettingsContextType {
   logo: string;
   setLogo: (logo: string) => Promise<void>;
+  logoSize: number;
+  setLogoSize: (size: number) => Promise<void>;
 }
 
 const SettingsContext = createContext<SettingsContextType | undefined>(undefined);
 
 export function SettingsProvider({ children }: { children: ReactNode }) {
   const [logo, setLogoState] = useState<string>(defaultLogo);
+  const [logoSize, setLogoSizeState] = useState<number>(56);
 
   useEffect(() => {
     // Check if document exists and seed if not
@@ -20,7 +23,7 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
         const docRef = doc(db, 'settings', 'general');
         const d = await getDoc(docRef);
         if (!d.exists()) {
-          await setDoc(docRef, { logo: defaultLogo });
+          await setDoc(docRef, { logo: defaultLogo, logoSize: 56 });
         }
       } catch (err) {
         console.error("Settings initialization error", err);
@@ -34,6 +37,9 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
         if (data.logo) {
           setLogoState(data.logo);
         }
+        if (data.logoSize) {
+          setLogoSizeState(data.logoSize);
+        }
       }
     });
 
@@ -44,8 +50,12 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
     await setDoc(doc(db, 'settings', 'general'), { logo: newLogo }, { merge: true });
   };
 
+  const setLogoSize = async (newSize: number) => {
+    await setDoc(doc(db, 'settings', 'general'), { logoSize: newSize }, { merge: true });
+  };
+
   return (
-    <SettingsContext.Provider value={{ logo, setLogo }}>
+    <SettingsContext.Provider value={{ logo, setLogo, logoSize, setLogoSize }}>
       {children}
     </SettingsContext.Provider>
   );

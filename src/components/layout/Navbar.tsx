@@ -20,7 +20,7 @@ const links = [
 export function Navbar() {
   const [location] = useLocation();
   const { cartItems, cartCount, cartTotal, updateQuantity, removeFromCart } = useCart();
-  const { logo } = useSettings();
+  const { logo, logoSize } = useSettings();
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -28,7 +28,7 @@ export function Navbar() {
       <div className="container mx-auto px-4 h-20 flex items-center justify-between">
         <Link href="/">
           <div className="flex items-center cursor-pointer">
-            <img src={logo} alt="Town Pizza Hut Logo" className="h-14 w-auto" />
+            <img src={logo} alt="Town Pizza Hut Logo" className="w-auto" style={{ height: `${logoSize}px` }} />
           </div>
         </Link>
 
@@ -125,7 +125,7 @@ export function Navbar() {
               </SheetTrigger>
               <SheetContent side="left" className="w-[300px] flex flex-col">
                 <div className="py-4">
-                  <img src={logo} alt="Town Pizza Hut Logo" className="h-12 w-auto mb-8" />
+                  <img src={logo} alt="Town Pizza Hut Logo" className="w-auto mb-8" style={{ height: `${logoSize}px` }} />
                   <div className="flex flex-col space-y-2">
                     {links.map((link) => (
                       <Link key={link.href} href={link.href}>

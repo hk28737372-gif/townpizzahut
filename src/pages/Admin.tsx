@@ -35,8 +35,9 @@ export default function Admin() {
   const [loginError, setLoginError] = useState("");
   const [activeTab, setActiveTab] = useState("dashboard");
 
-  const { items, deals, categories, setItems, setDeals, setCategories, addItem, updateItem, deleteItem, updateDeal, deleteDeal, updateCategory, reorderCategories } = useMenu();
-  const { logo, setLogo } = useSettings();
+  const { items, deals, categories, setItems, setDeals, setCategories, addItem, updateItem, deleteItem, addDeal, updateDeal, deleteDeal, updateCategory, addCategory, reorderCategories } = useMenu();
+  const { logo, setLogo, logoSize, setLogoSize } = useSettings();
+  
   const [addItemOpen, setAddItemOpen] = useState(false);
   const [newItem, setNewItem] = useState({ name: "", category: "Burgers", price: "", image: "" });
 
@@ -46,11 +47,17 @@ export default function Admin() {
   const [itemToDelete, setItemToDelete] = useState<number | null>(null);
   const [deleteItemOpen, setDeleteItemOpen] = useState(false);
 
+  const [addDealOpen, setAddDealOpen] = useState(false);
+  const [newDeal, setNewDeal] = useState({ title: "", price: "", items: "", image: "" });
+
   const [editDealOpen, setEditDealOpen] = useState(false);
   const [editingDeal, setEditingDeal] = useState<{ id: number, title: string, price: string, items: string, image: string } | null>(null);
 
   const [dealToDelete, setDealToDelete] = useState<number | null>(null);
   const [deleteDealOpen, setDeleteDealOpen] = useState(false);
+
+  const [addCategoryOpen, setAddCategoryOpen] = useState(false);
+  const [newCategory, setNewCategory] = useState({ name: "", image: "" });
 
   const [draggedCategoryId, setDraggedCategoryId] = useState<string | null>(null);
   
@@ -202,6 +209,32 @@ export default function Admin() {
     }
     setDeleteDealOpen(false);
     setDealToDelete(null);
+  };
+
+  const handleAddDeal = () => {
+    if (!newDeal.title || !newDeal.price) return;
+    const deal: Deal = {
+      id: Date.now(),
+      title: newDeal.title,
+      price: Number(newDeal.price),
+      items: newDeal.items.split(",").map(s => s.trim()).filter(Boolean),
+      image: newDeal.image || "https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=500&q=75"
+    };
+    addDeal(deal);
+    setNewDeal({ title: "", price: "", items: "", image: "" });
+    setAddDealOpen(false);
+  };
+
+  const handleAddCategory = () => {
+    if (!newCategory.name) return;
+    const cat: CategoryItem = {
+      id: Date.now().toString(),
+      name: newCategory.name,
+      image: newCategory.image || "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=500&q=75"
+    };
+    addCategory(cat);
+    setNewCategory({ name: "", image: "" });
+    setAddCategoryOpen(false);
   };
 
   if (!authenticated) {
@@ -516,6 +549,41 @@ export default function Admin() {
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
             <div className="flex items-center justify-between mb-6">
               <h2 className="font-serif text-2xl font-bold">Deals Management</h2>
+              <Dialog open={addDealOpen} onOpenChange={setAddDealOpen}>
+                <DialogTrigger asChild>
+                  <Button className="rounded-xl h-10">
+                    <Plus className="mr-2 h-4 w-4" /> Add Deal
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="rounded-2xl">
+                  <DialogHeader>
+                    <DialogTitle className="font-serif text-xl">Add New Deal</DialogTitle>
+                  </DialogHeader>
+                  <div className="space-y-4 mt-4">
+                    <div className="space-y-1.5">
+                      <Label className="text-sm font-medium">Deal Title</Label>
+                      <Input placeholder="e.g. Midnight Deal" value={newDeal.title} onChange={e => setNewDeal(p => ({ ...p, title: e.target.value }))} className="h-11 rounded-xl" />
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label className="text-sm font-medium">Include Items (comma separated)</Label>
+                      <Input placeholder="1 Zinger, 1 Pepsi" value={newDeal.items} onChange={e => setNewDeal(p => ({ ...p, items: e.target.value }))} className="h-11 rounded-xl" />
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label className="text-sm font-medium">Price (Rs.)</Label>
+                      <Input type="number" placeholder="999" value={newDeal.price} onChange={e => setNewDeal(p => ({ ...p, price: e.target.value }))} className="h-11 rounded-xl" />
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label className="text-sm font-medium">Image URL</Label>
+                      <Input placeholder="https://..." value={newDeal.image} onChange={e => setNewDeal(p => ({ ...p, image: e.target.value }))} className="h-11 rounded-xl" />
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label className="text-sm font-medium">Or Upload Image (Gallery)</Label>
+                      <Input type="file" accept="image/*" onChange={e => handleImageUpload(e, setNewDeal)} className="h-11 rounded-xl file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20" />
+                    </div>
+                    <Button className="w-full h-11 rounded-xl" onClick={handleAddDeal}>Add Deal</Button>
+                  </div>
+                </DialogContent>
+              </Dialog>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
               {deals.map(deal => (
@@ -648,6 +716,22 @@ export default function Admin() {
                     </div>
                   </div>
                 </div>
+
+                <div className="flex flex-col gap-4 mt-6">
+                  <Label className="font-medium text-base">Logo Size (px)</Label>
+                  <p className="text-sm text-muted-foreground">Adjust the height of the logo shown on the website.</p>
+                  <div className="flex items-center gap-4">
+                    <input 
+                      type="range" 
+                      min="20" 
+                      max="200" 
+                      value={logoSize} 
+                      onChange={e => setLogoSize(Number(e.target.value))} 
+                      className="w-full max-w-sm" 
+                    />
+                    <span className="font-medium">{logoSize} px</span>
+                  </div>
+                </div>
               </div>
             </div>
           </motion.div>
@@ -658,6 +742,33 @@ export default function Admin() {
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
             <div className="flex items-center justify-between mb-6">
               <h2 className="font-serif text-2xl font-bold">Categories (Drag to Reorder)</h2>
+              <Dialog open={addCategoryOpen} onOpenChange={setAddCategoryOpen}>
+                <DialogTrigger asChild>
+                  <Button className="rounded-xl h-10">
+                    <Plus className="mr-2 h-4 w-4" /> Add Category
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="rounded-2xl">
+                  <DialogHeader>
+                    <DialogTitle className="font-serif text-xl">Add New Category</DialogTitle>
+                  </DialogHeader>
+                  <div className="space-y-4 mt-4">
+                    <div className="space-y-1.5">
+                      <Label className="text-sm font-medium">Category Name</Label>
+                      <Input placeholder="e.g. Desserts" value={newCategory.name} onChange={e => setNewCategory(p => ({ ...p, name: e.target.value }))} className="h-11 rounded-xl" />
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label className="text-sm font-medium">Image URL</Label>
+                      <Input placeholder="https://..." value={newCategory.image} onChange={e => setNewCategory(p => ({ ...p, image: e.target.value }))} className="h-11 rounded-xl" />
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label className="text-sm font-medium">Or Upload Image (Gallery)</Label>
+                      <Input type="file" accept="image/*" onChange={e => handleImageUpload(e, setNewCategory)} className="h-11 rounded-xl file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20" />
+                    </div>
+                    <Button className="w-full h-11 rounded-xl" onClick={handleAddCategory}>Add Category</Button>
+                  </div>
+                </DialogContent>
+              </Dialog>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">

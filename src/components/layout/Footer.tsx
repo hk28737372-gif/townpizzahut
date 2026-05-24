@@ -6,14 +6,14 @@ import { branches } from "@/data/menuData";
 import { useSettings } from "@/context/SettingsContext";
 
 export function Footer() {
-  const { logo } = useSettings();
+  const { logo, logoSize } = useSettings();
   return (
     <footer className="bg-sidebar text-sidebar-foreground pt-16 pb-8 border-t border-sidebar-border">
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
           
           <div className="space-y-6">
-            <img src={logo} alt="Town Pizza Hut" className="h-16 bg-white/10 p-2 rounded-lg" />
+            <img src={logo} alt="Town Pizza Hut" className="bg-white/10 p-2 rounded-lg" style={{ height: `${logoSize}px` }} />
             <p className="text-sidebar-foreground/80 leading-relaxed font-serif italic text-lg">
               "The Name of Quality"
             </p>
