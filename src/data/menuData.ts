@@ -1,5 +1,11 @@
 export type Category = string;
 
+export interface CategoryItem {
+  id: string;
+  name: string;
+  image: string;
+}
+
 export interface MenuItem {
   id: number;
   name: string;
@@ -31,6 +37,13 @@ export const categories: Category[] = [
   "Fried Chicken",
   "Shawarma & Rolls",
   "Pizza"
+];
+
+export const initialCategoriesData: CategoryItem[] = [
+  { id: "Burgers", name: "Burgers", image: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=500&q=75&auto=format&fit=crop" },
+  { id: "Fried Chicken", name: "Fried Chicken", image: "https://images.unsplash.com/photo-1587593810167-a84920ea0781?w=500&q=75&auto=format&fit=crop" },
+  { id: "Shawarma & Rolls", name: "Shawarma & Rolls", image: "https://images.unsplash.com/photo-1529006557810-274b9b2fc783?w=500&q=75&auto=format&fit=crop" },
+  { id: "Pizza", name: "Pizza", image: "https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=500&q=75&auto=format&fit=crop" }
 ];
 
 export const menuItems: MenuItem[] = [

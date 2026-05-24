@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { Lock, LayoutDashboard, Package, Tag, Store, Trash2, Pencil, Plus, X, Eye, EyeOff } from "lucide-react";
+import { Lock, LayoutDashboard, Package, Tag, Store, Trash2, Pencil, Plus, X, Eye, EyeOff, GripVertical, Image as ImageIcon, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -8,8 +8,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { useMenu } from "@/context/MenuContext";
-import { menuItems as initialItems, deals as initialDeals, branches, categories } from "@/data/menuData";
-import type { MenuItem, Deal } from "@/data/menuData";
+import { useSettings } from "@/context/SettingsContext";
+import { menuItems as initialItems, deals as initialDeals, branches, categories as oldCategories } from "@/data/menuData";
+import type { MenuItem, Deal, CategoryItem } from "@/data/menuData";
 
 const ADMIN_PASSWORD = "townpizza2024";
 
@@ -34,7 +35,8 @@ export default function Admin() {
   const [loginError, setLoginError] = useState("");
   const [activeTab, setActiveTab] = useState("dashboard");
 
-  const { items, deals, addItem, updateItem, deleteItem, updateDeal, deleteDeal } = useMenu();
+  const { items, deals, categories, setItems, setDeals, setCategories, addItem, updateItem, deleteItem, updateDeal, deleteDeal, updateCategory, reorderCategories } = useMenu();
+  const { logo, setLogo } = useSettings();
   const [addItemOpen, setAddItemOpen] = useState(false);
   const [newItem, setNewItem] = useState({ name: "", category: "Burgers", price: "", image: "" });
 
@@ -50,12 +52,65 @@ export default function Admin() {
   const [dealToDelete, setDealToDelete] = useState<number | null>(null);
   const [deleteDealOpen, setDeleteDealOpen] = useState(false);
 
+  const [draggedCategoryId, setDraggedCategoryId] = useState<string | null>(null);
+  
+  const [editCategoryOpen, setEditCategoryOpen] = useState(false);
+  const [editingCategory, setEditingCategory] = useState<CategoryItem | null>(null);
+
+  const openEditCategoryModal = (cat: CategoryItem) => {
+    setEditingCategory(cat);
+    setEditCategoryOpen(true);
+  };
+
+  const handleSaveEditCategory = () => {
+    if (editingCategory) {
+      updateCategory(editingCategory);
+      setEditCategoryOpen(false);
+      setEditingCategory(null);
+    }
+  };
+
+  const handleDragStartCategory = (e: React.DragEvent, id: string) => {
+    setDraggedCategoryId(id);
+    e.dataTransfer.effectAllowed = "move";
+  };
+
+  const handleDragOverCategory = (e: React.DragEvent, targetId: string) => {
+    e.preventDefault();
+    if (!draggedCategoryId || draggedCategoryId === targetId) return;
+
+    const sourceIndex = categories.findIndex(c => c.id === draggedCategoryId);
+    const targetIndex = categories.findIndex(c => c.id === targetId);
+
+    if (sourceIndex > -1 && targetIndex > -1) {
+      const newCats = [...categories];
+      const [removed] = newCats.splice(sourceIndex, 1);
+      newCats.splice(targetIndex, 0, removed);
+      reorderCategories(newCats);
+    }
+  };
+
+  const handleDragEndCategory = () => {
+    setDraggedCategoryId(null);
+  };
+
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>, setter: React.Dispatch<React.SetStateAction<any>>) => {
     const file = e.target.files?.[0];
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
         setter((prev: any) => ({ ...prev, image: reader.result as string }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setLogo(reader.result as string);
       };
       reader.readAsDataURL(file);
     }
@@ -203,9 +258,11 @@ export default function Admin() {
 
   const tabs = [
     { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
+    { id: "categories", label: "Categories", icon: ImageIcon },
     { id: "products", label: "Products", icon: Package },
     { id: "deals", label: "Deals", icon: Tag },
     { id: "orders", label: "Orders", icon: Store },
+    { id: "settings", label: "Settings", icon: Settings },
   ];
 
   return (
@@ -335,7 +392,7 @@ export default function Admin() {
                       <Select value={newItem.category} onValueChange={v => setNewItem(p => ({ ...p, category: v }))}>
                         <SelectTrigger className="h-11 rounded-xl"><SelectValue /></SelectTrigger>
                         <SelectContent>
-                          {categories.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+                          {categories.map(c => <SelectItem key={c.id} value={c.name}>{c.name}</SelectItem>)}
                         </SelectContent>
                       </Select>
                     </div>
@@ -373,7 +430,7 @@ export default function Admin() {
                       <Select value={editingItem.category} onValueChange={v => setEditingItem(p => p ? { ...p, category: v } : null)}>
                         <SelectTrigger className="h-11 rounded-xl"><SelectValue /></SelectTrigger>
                         <SelectContent>
-                          {categories.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+                          {categories.map(c => <SelectItem key={c.id} value={c.name}>{c.name}</SelectItem>)}
                         </SelectContent>
                       </Select>
                     </div>
@@ -565,6 +622,95 @@ export default function Admin() {
             </div>
           </motion.div>
         )}
+        {/* SETTINGS */}
+        {activeTab === "settings" && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+            <h2 className="font-serif text-2xl font-bold mb-6">Settings</h2>
+            <div className="bg-card border rounded-2xl p-6 shadow-sm max-w-2xl">
+              <h3 className="font-bold text-lg mb-4 text-foreground/90">Appearance</h3>
+              
+              <div className="space-y-4">
+                <div className="flex flex-col gap-4">
+                  <Label className="font-medium text-base">Website Logo</Label>
+                  <p className="text-sm text-muted-foreground">Upload a new logo to be displayed in the header and footer of your website.</p>
+                  
+                  <div className="flex items-center gap-6 mt-2">
+                    <div className="w-24 h-24 bg-muted rounded-xl flex items-center justify-center p-2 border shrink-0">
+                        <img src={logo} alt="Current Logo" className="w-full h-full object-contain" />
+                    </div>
+                    <div className="flex-1">
+                      <Input 
+                        type="file" 
+                        accept="image/*" 
+                        onChange={handleLogoUpload} 
+                        className="file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20 h-12 pt-2 border-dashed border-2 cursor-pointer" 
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        )}
+
+        {/* CATEGORIES */}
+        {activeTab === "categories" && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="font-serif text-2xl font-bold">Categories (Drag to Reorder)</h2>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              {categories.map((cat, idx) => (
+                <div
+                  key={cat.id}
+                  draggable
+                  onDragStart={(e) => handleDragStartCategory(e, cat.id)}
+                  onDragOver={(e) => handleDragOverCategory(e, cat.id)}
+                  onDragEnd={handleDragEndCategory}
+                  className={`bg-card border rounded-2xl flex flex-col overflow-hidden shadow-sm hover:shadow-md cursor-grab active:cursor-grabbing transition-transform ${draggedCategoryId === cat.id ? 'opacity-50 scale-95 border-primary border-2' : ''}`}
+                >
+                  <div className="h-40 relative bg-muted group">
+                    <img src={cat.image} alt={cat.name} className="w-full h-full object-cover" loading="lazy" />
+                    <div className="absolute top-2 right-2 flex gap-1">
+                      <Button variant="secondary" size="icon" className="h-8 w-8 rounded-full shadow-sm bg-white/90 hover:bg-white text-muted-foreground hover:text-foreground" onClick={() => openEditCategoryModal(cat)}>
+                        <Pencil size={14} />
+                      </Button>
+                    </div>
+                  </div>
+                  <div className="p-4 flex items-center gap-3">
+                    <div className="cursor-grab text-muted-foreground/50 hover:text-muted-foreground shrink-0">
+                      <GripVertical size={20} />
+                    </div>
+                    <span className="font-semibold text-lg line-clamp-1">{cat.name}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <Dialog open={editCategoryOpen} onOpenChange={setEditCategoryOpen}>
+              <DialogContent className="rounded-2xl">
+                <DialogHeader>
+                  <DialogTitle className="font-serif text-xl">Edit Category Image: {editingCategory?.name}</DialogTitle>
+                </DialogHeader>
+                {editingCategory && (
+                  <div className="space-y-4 mt-4">
+                    <div className="space-y-1.5">
+                      <Label className="text-sm font-medium">Image URL</Label>
+                      <Input placeholder="https://..." value={editingCategory.image} onChange={e => setEditingCategory(p => p ? { ...p, image: e.target.value } : null)} className="h-11 rounded-xl" />
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label className="text-sm font-medium">Or Upload Image (Gallery)</Label>
+                      <Input type="file" accept="image/*" onChange={e => handleImageUpload(e, setEditingCategory)} className="h-11 rounded-xl file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20" />
+                    </div>
+                    <Button className="w-full h-11 rounded-xl" onClick={handleSaveEditCategory}>Save Category changes</Button>
+                  </div>
+                )}
+              </DialogContent>
+            </Dialog>
+          </motion.div>
+        )}
+
       </div>
     </div>
   );

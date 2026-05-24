@@ -4,7 +4,6 @@ import { motion } from "framer-motion";
 import { ArrowRight, Star, Clock, Heart, Truck, Utensils } from "lucide-react";
 import { FaWhatsapp } from "react-icons/fa";
 import { Button } from "@/components/ui/button";
-import { categories } from "@/data/menuData";
 import { useMenu } from "@/context/MenuContext";
 import { FoodCard } from "@/components/FoodCard";
 
@@ -24,7 +23,7 @@ const staggerContainer = {
 };
 
 export default function Home() {
-  const { deals } = useMenu();
+  const { deals, categories } = useMenu();
   return (
     <div className="min-h-screen bg-background">
       {/* Hero Section */}
@@ -127,15 +126,8 @@ export default function Home() {
           
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
             {categories.map((category, idx) => {
-              const imageMap: Record<string, string> = {
-                "Burgers": "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=500&q=75&auto=format&fit=crop",
-                "Fried Chicken": "https://images.unsplash.com/photo-1587593810167-a84920ea0781?w=500&q=75&auto=format&fit=crop",
-                "Shawarma & Rolls": "https://images.unsplash.com/photo-1529006557810-274b9b2fc783?w=500&q=75&auto=format&fit=crop",
-                "Pizza": "https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=500&q=75&auto=format&fit=crop"
-              };
-              
               return (
-                <Link key={category} href={`/menu?category=${category}`}>
+                <Link key={category.id} href={`/menu?category=${category.name}`}>
                   <motion.div 
                     initial={{ opacity: 0, scale: 0.9 }}
                     whileInView={{ opacity: 1, scale: 1 }}
@@ -143,10 +135,10 @@ export default function Home() {
                     transition={{ delay: idx * 0.1 }}
                     className="group relative h-48 md:h-64 rounded-2xl overflow-hidden cursor-pointer shadow-md"
                   >
-                    <img src={imageMap[category]} alt={category} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+                    <img src={category.image} alt={category.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
                     <div className="absolute bottom-4 left-4 right-4 text-center">
-                      <h3 className="text-white font-serif font-bold text-xl md:text-2xl">{category}</h3>
+                      <h3 className="text-white font-serif font-bold text-xl md:text-2xl">{category.name}</h3>
                     </div>
                   </motion.div>
                 </Link>

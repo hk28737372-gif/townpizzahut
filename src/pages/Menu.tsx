@@ -2,14 +2,13 @@ import React, { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { Search } from "lucide-react";
 import { motion } from "framer-motion";
-import { categories } from "@/data/menuData";
 import { useMenu } from "@/context/MenuContext";
 import { FoodCard } from "@/components/FoodCard";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default function Menu() {
-  const { items: menuItems } = useMenu();
+  const { items: menuItems, categories } = useMenu();
   const [searchParams] = useLocation();
   const initialCategory = new URLSearchParams(window.location.search).get("category") || "All";
   
@@ -49,8 +48,8 @@ export default function Menu() {
                 All Items
               </TabsTrigger>
               {categories.map(cat => (
-                <TabsTrigger key={cat} value={cat} className="h-12 px-6 rounded-xl text-base font-medium data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-                  {cat}
+                <TabsTrigger key={cat.id} value={cat.name} className="h-12 px-6 rounded-xl text-base font-medium data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+                  {cat.name}
                 </TabsTrigger>
               ))}
             </TabsList>

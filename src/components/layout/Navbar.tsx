@@ -5,7 +5,7 @@ import { useCart } from "@/context/CartContext";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetFooter } from "@/components/ui/sheet";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import logoPath from "@/assets/logo.png";
+import { SettingsProvider, useSettings } from "@/context/SettingsContext";
 
 const links = [
   { href: "/", label: "Home" },
@@ -20,6 +20,7 @@ const links = [
 export function Navbar() {
   const [location] = useLocation();
   const { cartItems, cartCount, cartTotal, updateQuantity, removeFromCart } = useCart();
+  const { logo } = useSettings();
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -27,7 +28,7 @@ export function Navbar() {
       <div className="container mx-auto px-4 h-20 flex items-center justify-between">
         <Link href="/">
           <div className="flex items-center cursor-pointer">
-            <img src={logoPath} alt="Town Pizza Hut Logo" className="h-14 w-auto" />
+            <img src={logo} alt="Town Pizza Hut Logo" className="h-14 w-auto" />
           </div>
         </Link>
 
@@ -124,7 +125,7 @@ export function Navbar() {
               </SheetTrigger>
               <SheetContent side="left" className="w-[300px] flex flex-col">
                 <div className="py-4">
-                  <img src={logoPath} alt="Town Pizza Hut Logo" className="h-12 w-auto mb-8" />
+                  <img src={logo} alt="Town Pizza Hut Logo" className="h-12 w-auto mb-8" />
                   <div className="flex flex-col space-y-2">
                     {links.map((link) => (
                       <Link key={link.href} href={link.href}>

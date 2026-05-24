@@ -4,6 +4,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { CartProvider } from "@/context/CartContext";
 import { MenuProvider } from "@/context/MenuContext";
+import { SettingsProvider } from "@/context/SettingsContext";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { FloatingWhatsApp } from "@/components/FloatingWhatsApp";
@@ -64,16 +65,18 @@ function App() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <MenuProvider>
-        <CartProvider>
-          <TooltipProvider>
-            <WouterRouter base={routerBase || undefined}>
-              <Router />
-            </WouterRouter>
-            <Toaster />
-          </TooltipProvider>
-        </CartProvider>
-      </MenuProvider>
+      <SettingsProvider>
+        <MenuProvider>
+          <CartProvider>
+            <TooltipProvider>
+              <WouterRouter base={routerBase || undefined}>
+                <Router />
+              </WouterRouter>
+              <Toaster />
+            </TooltipProvider>
+          </CartProvider>
+        </MenuProvider>
+      </SettingsProvider>
     </QueryClientProvider>
   );
 }
