@@ -13,8 +13,12 @@ export interface SettingsContextType {
 const SettingsContext = createContext<SettingsContextType | undefined>(undefined);
 
 export function SettingsProvider({ children }: { children: ReactNode }) {
-  const [logo, setLogoState] = useState<string>(defaultLogo);
-  const [logoSize, setLogoSizeState] = useState<number>(56);
+  const [logo, setLogoState] = useState<string>(() => {
+    return localStorage.getItem('townpizza_logo') || defaultLogo;
+  });
+  const [logoSize, setLogoSizeState] = useState<number>(() => {
+    return Number(localStorage.getItem('townpizza_logo_size')) || 56;
+  });
 
   useEffect(() => {
     // Check if document exists and seed if not
@@ -36,9 +40,11 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
         const data = snapshot.data();
         if (data.logo) {
           setLogoState(data.logo);
+          localStorage.setItem('townpizza_logo', data.logo);
         }
         if (data.logoSize) {
           setLogoSizeState(data.logoSize);
+          localStorage.setItem('townpizza_logo_size', data.logoSize.toString());
         }
       }
     });

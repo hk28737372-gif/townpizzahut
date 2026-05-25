@@ -24,10 +24,27 @@ interface MenuContextType {
 const MenuContext = createContext<MenuContextType | undefined>(undefined);
 
 export function MenuProvider({ children }: { children: ReactNode }) {
-  const [items, setItems] = useState<MenuItem[]>([]);
-  const [deals, setDeals] = useState<Deal[]>([]);
-  const [categories, setCategories] = useState<CategoryItem[]>([]);
-  const [isInitializing, setIsInitializing] = useState(true);
+  const [items, setItems] = useState<MenuItem[]>(() => {
+    const saved = localStorage.getItem('townpizza_menuItems');
+    if (saved) {
+      try { return JSON.parse(saved); } catch (e) {}
+    }
+    return initialItems;
+  });
+  const [deals, setDeals] = useState<Deal[]>(() => {
+    const saved = localStorage.getItem('townpizza_deals');
+    if (saved) {
+      try { return JSON.parse(saved); } catch (e) {}
+    }
+    return initialDeals;
+  });
+  const [categories, setCategories] = useState<CategoryItem[]>(() => {
+    const saved = localStorage.getItem('townpizza_categoriesData');
+    if (saved) {
+      try { return JSON.parse(saved); } catch (e) {}
+    }
+    return initialCategoriesData;
+  });
 
   useEffect(() => {
     // Seed and listen to Menu Items
@@ -47,10 +64,8 @@ export function MenuProvider({ children }: { children: ReactNode }) {
           });
           await batch.commit();
         }
-        setIsInitializing(false);
       } catch (e) {
         console.error("Initialization error:", e);
-        setIsInitializing(false);
       }
     };
 
@@ -58,16 +73,16 @@ export function MenuProvider({ children }: { children: ReactNode }) {
   }, []);
 
   useEffect(() => {
-    if (isInitializing) return;
-
     const unsubItems = onSnapshot(collection(db, 'menuItems'), snapshot => {
       const dbItems = snapshot.docs.map(d => ({ ...d.data(), id: Number(d.id) } as MenuItem));
       setItems(dbItems);
+      localStorage.setItem('townpizza_menuItems', JSON.stringify(dbItems));
     });
 
     const unsubDeals = onSnapshot(collection(db, 'deals'), snapshot => {
       const dbDeals = snapshot.docs.map(d => ({ ...d.data(), id: Number(d.id) } as Deal));
       setDeals(dbDeals);
+      localStorage.setItem('townpizza_deals', JSON.stringify(dbDeals));
     });
 
     const unsubCategories = onSnapshot(collection(db, 'categories'), snapshot => {
@@ -75,6 +90,7 @@ export function MenuProvider({ children }: { children: ReactNode }) {
       // Sort by order field if it exists
       dbCategories.sort((a, b) => (a.order || 0) - (b.order || 0));
       setCategories(dbCategories);
+      localStorage.setItem('townpizza_categoriesData', JSON.stringify(dbCategories));
     });
 
     return () => {
@@ -82,7 +98,7 @@ export function MenuProvider({ children }: { children: ReactNode }) {
       unsubDeals();
       unsubCategories();
     };
-  }, [isInitializing]);
+  }, []);
 
   const addItem = async (item: MenuItem) => {
     await setDoc(doc(db, 'menuItems', item.id.toString()), item);
