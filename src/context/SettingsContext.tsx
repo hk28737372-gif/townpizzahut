@@ -60,8 +60,22 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
     await setDoc(doc(db, 'settings', 'general'), { logoSize: newSize }, { merge: true });
   };
 
+  const getResolvedLogoUrl = (url: string) => {
+    if (!url) return defaultLogo;
+    if (url.startsWith('data:') || url.startsWith('http:') || url.startsWith('https:')) {
+      return url;
+    }
+    const baseUrl = import.meta.env.BASE_URL.replace(/\/$/, "");
+    if (url.startsWith('/')) {
+      if (baseUrl && !url.startsWith(baseUrl)) {
+        return `${baseUrl}${url}`;
+      }
+    }
+    return url;
+  };
+
   return (
-    <SettingsContext.Provider value={{ logo, setLogo, logoSize, setLogoSize }}>
+    <SettingsContext.Provider value={{ logo: getResolvedLogoUrl(logo), setLogo, logoSize, setLogoSize }}>
       {children}
     </SettingsContext.Provider>
   );
