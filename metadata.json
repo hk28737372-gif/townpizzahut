@@ -1,0 +1,6 @@
+{
+  "name": "Nexa",
+  "description": "Your Personal Digital Operating System for premium organization, second brain, and personal intelligence.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

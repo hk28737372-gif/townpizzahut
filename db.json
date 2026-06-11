@@ -1,0 +1,123 @@
+{
+  "users": [
+    {
+      "id": "user-1781191889081",
+      "email": "operator@nexa.io",
+      "name": "Lead Architect",
+      "passwordHash": "",
+      "tier": "Pro",
+      "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=256",
+      "productivityScore": 95
+    }
+  ],
+  "notes": [
+    {
+      "id": "note-1781191889081-1",
+      "userId": "user-1781191889081",
+      "title": "SaaS Investment Series Pitch Structure",
+      "content": "Here is the fundamental outline for the seed investment round deck (targeting $4.5M at $45M cap):\n\n1. Executive Context - Stop building chatbots. Autonomy is the ultimate ceiling.\n2. Proactive OS Architecture - Detail our offline-first semantic memories.\n3. Market Wedge - Individual high-pacing professionals, builders & Silicon Valley founders.\n4. Scalability Metrics - Current productivity score indicators and document parsed verification indexes.\n\nNext Action: Sync this outline directly with our corporate attorney.",
+      "category": "Finance",
+      "updatedAt": "Jun 11, 2026",
+      "isPinned": true
+    },
+    {
+      "id": "note-1781191889104-2",
+      "userId": "user-1781191889081",
+      "title": "Brand Design Guidelines & Typography Pairs",
+      "content": "Aesthetic pairs for the modern $100M valuation look:\n\n• Primary Display Typography: Plus Jakarta Sans for elite display tracking & modern look.\n• Code & Status Indicator: JetBrains Mono for exact telemetry outputs.\n• Color Pacing: Perfect slate black grids combined with translucent dark cards. High-contrast Indigo and Emerald accents.\n• Density Variation: Reject spacing constants. Rhythm comes from dynamic layouts.",
+      "category": "General",
+      "updatedAt": "Jun 11, 2026",
+      "isPinned": false
+    }
+  ],
+  "reminders": [
+    {
+      "id": "rem-1781191889104-1",
+      "userId": "user-1781191889081",
+      "text": "Deliver design spec draft to Silicon Valley team",
+      "dueDate": "2026-06-12",
+      "priority": "high",
+      "completed": false,
+      "category": "Work"
+    },
+    {
+      "id": "rem-1781191889105-2",
+      "userId": "user-1781191889081",
+      "text": "Review SaaS pitch analytics scorecard and tax forms",
+      "dueDate": "2026-06-14",
+      "priority": "medium",
+      "completed": false,
+      "category": "Finance"
+    },
+    {
+      "id": "rem-1781191889105-3",
+      "userId": "user-1781191889081",
+      "text": "Audit client registration legal agreements",
+      "dueDate": "2026-06-11",
+      "priority": "high",
+      "completed": true,
+      "category": "Legal"
+    }
+  ],
+  "documents": [
+    {
+      "id": "doc-1781191889105-1",
+      "userId": "user-1781191889081",
+      "name": "Client_Incorporation_v3.pdf",
+      "type": "Legal PDF",
+      "dateAdded": "Jun 11, 2026",
+      "size": "2.4 MB",
+      "parsedInsights": "Registered Name: Nexa Systems LLC\nAuthorized Share Limit: 10,000,000 common stock assets\nRegistered Agent: CorpTrust Advisors LLC\nStatus Flag: High-priority active validation complete. Aligned with state guidelines.",
+      "isVerified": true
+    }
+  ],
+  "subscriptions": [
+    {
+      "id": "sub-1781191889105-1",
+      "userId": "user-1781191889081",
+      "name": "ChatGPT Plus",
+      "cost": 20,
+      "billingCycle": "monthly",
+      "nextBillingDate": "2026-06-20",
+      "category": "Productivity",
+      "status": "active"
+    },
+    {
+      "id": "sub-1781191889105-2",
+      "userId": "user-1781191889081",
+      "name": "Spotify Premium",
+      "cost": 11.99,
+      "billingCycle": "monthly",
+      "nextBillingDate": "2026-06-18",
+      "category": "Entertainment",
+      "status": "active"
+    }
+  ],
+  "captureItems": [
+    {
+      "id": "cap-1781191889105-1",
+      "userId": "user-1781191889081",
+      "title": "Silicon Valley Wedge Strategy",
+      "description": "wedge into builders & high-performance executives",
+      "type": "idea",
+      "category": "Startup Ideas",
+      "tags": [
+        "strategy",
+        "execution"
+      ],
+      "isFavorite": true,
+      "isArchived": false,
+      "createdAt": "Jun 11, 2026"
+    }
+  ],
+  "activityLogs": [
+    {
+      "id": "log-1781191889105-1",
+      "userId": "user-1781191889081",
+      "timestamp": "Jun 11, 2026, 03:31 PM",
+      "type": "note_created",
+      "title": "Created business outline deck",
+      "details": "Aesthetic spacing values"
+    }
+  ]
+}
